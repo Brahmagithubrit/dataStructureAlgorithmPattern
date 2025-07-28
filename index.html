@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive DSA Mastery Blueprint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals & Subtle Accents -->
+    <!-- Application Structure Plan: A dashboard-style, single-page application is chosen for optimal usability. A fixed sidebar on the left provides persistent navigation, allowing users to instantly switch between any of the 19 DSA patterns without scrolling. The main content area on the right dynamically updates to display the selected pattern's details. This structure is superior to a long-scrolling page because it provides immediate access to any topic, facilitates quick comparison between patterns, and organizes the vast amount of information into manageable, focused sections. The core interaction is a simple click-to-view model, making the app highly intuitive for a user focused on learning quickly. -->
+    <!-- Visualization & Content Choices: Report Info: The 19 DSA patterns, their use cases, and core problems. -> Goal: Provide a quick, visual summary of a pattern's characteristics. -> Viz/Presentation Method: A radar chart from Chart.js. -> Interaction: The chart dynamically updates when a new pattern is selected from the sidebar. -> Justification: A radar chart is perfect for comparing multiple quantitative dimensions (like implementation difficulty, conceptual grasp, and interview frequency) on a single, easy-to-read graphic. This gives a high-level "feel" for the pattern before diving into text. All other content is presented in structured HTML with clear typography for readability. -> Library/Method: Chart.js (Canvas), Tailwind CSS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar-item.active {
+            background-color: #E5E7EB;
+            color: #111827;
+            font-weight: 600;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: auto;
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body class="bg-[#F9FAFB] text-gray-800">
+
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 h-full overflow-y-auto">
+            <div class="p-4">
+                <h1 class="text-xl font-bold text-gray-900">🧠 DSA Patterns</h1>
+                <p class="text-sm text-gray-500 mt-1">The Complete Blueprint</p>
+            </div>
+            <nav id="sidebar-nav" class="mt-4 px-2">
+                <!-- Navigation items will be injected here by JavaScript -->
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+            <div id="main-content" class="max-w-4xl mx-auto">
+                <!-- Content will be injected here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const dsaData = [
+            { id: 0, name: "Two Pointers", when: "Sorted arrays, finding pairs/triplets, moving from both ends.", problems: ["Pair with Target Sum", "3Sum", "Container With Most Water", "Trap Rain Water."], stats: { implementation: 3, concept: 2, frequency: 9 } },
+            { id: 1, name: "Sliding Window", when: "Subarrays/substrings with a condition (max sum, longest, min window).", problems: ["Maximum Sum Subarray of Size K", "Longest Substring Without Repeating Characters", "Minimum Window Substring."], stats: { implementation: 5, concept: 4, frequency: 9 } },
+            { id: 2, name: "Fast & Slow Pointers", when: "Cycle detection in linked lists/arrays, finding intersections.", problems: ["Detect Cycle in Linked List", "Find Cycle Start", "Happy Number", "Middle of Linked List."], stats: { implementation: 4, concept: 5, frequency: 7 } },
+            { id: 3, name: "Binary Search Variants", when: "Searching sorted data or a range of possible answers (e.g., Koko Eating Bananas).", problems: ["Search in Rotated Sorted Array", "Median of Two Sorted Arrays", "Find First and Last Position."], stats: { implementation: 6, concept: 6, frequency: 8 } },
+            { id: 4, name: "Prefix Sum / Difference Array", when: "You need fast range sum queries or need to apply updates to a range efficiently.", problems: ["Subarray Sum Equals K", "Range Sum Query (2D included)", "Difference Array for Range Updates."], stats: { implementation: 5, concept: 4, frequency: 5 } },
+            { id: 5, name: "Greedy", when: "Making the best local choice leads to the global optimum. Often involves sorting first.", problems: ["Merge Intervals", "Jump Game", "Gas Station", "Activity Selection", "Fractional Knapsack."], stats: { implementation: 5, concept: 7, frequency: 8 } },
+            { id: 6, name: "Backtracking", when: "Finding all possible combinations, permutations, subsets, or solving constraint problems (Sudoku, N-Queens).", problems: ["Subsets", "Combination Sum", "Permutations", "N-Queens", "Palindrome Partitioning."], stats: { implementation: 8, concept: 7, frequency: 8 } },
+            { id: 7, name: "Dynamic Programming", when: "Overlapping subproblems and optimal substructure. If you can break it down into smaller, repeatable problems, it's DP.", problems: ["0/1 Knapsack", "Longest Common Subsequence", "Coin Change", "House Robber", "Edit Distance."], stats: { implementation: 9, concept: 10, frequency: 10 } },
+            { id: 8, name: "Bit Manipulation", when: "Problems involving powers of two, toggling bits, XOR tricks, or efficient subset generation.", problems: ["Single Number (I, II)", "Counting Bits", "Power of Two", "Subsets (using bitmask)."], stats: { implementation: 7, concept: 8, frequency: 4 } },
+            { id: 9, name: "Graphs (BFS / DFS)", when: "Anything about connectivity, shortest paths, cycles, or traversing a network.", problems: ["Number of Islands", "Clone Graph", "Word Ladder (BFS)", "Rotten Oranges (Multi-source BFS)."], stats: { implementation: 7, concept: 6, frequency: 9 } },
+            { id: 10, name: "Union-Find / Disjoint Set", when: "Managing connected components, checking for cycles in undirected graphs, or merging groups.", problems: ["Number of Connected Components", "Redundant Connection", "Accounts Merge."], stats: { implementation: 7, concept: 7, frequency: 5 } },
+            { id: 11, name: "Trees (DFS, LCA, Tree DP)", when: "Any problem on a binary tree that involves recursion, subtrees, or path calculations.", problems: ["Diameter of Binary Tree", "Max Path Sum", "Lowest Common Ancestor (LCA)", "Serialize/Deserialize Tree."], stats: { implementation: 6, concept: 6, frequency: 9 } },
+            { id: 12, name: "Trie / Radix Tree", when: "String prefix problems, autocomplete, or dictionary matching.", problems: ["Implement Trie", "Word Search II", "Replace Words."], stats: { implementation: 8, concept: 7, frequency: 6 } },
+            { id: 13, name: "Heap / Priority Queue", when: "Finding the 'K' largest/smallest elements, scheduling, or managing a stream of data (e.g., median).", problems: ["Kth Largest Element", "Top K Frequent Elements", "Merge K Sorted Lists", "Median from Data Stream."], stats: { implementation: 5, concept: 5, frequency: 8 } },
+            { id: 14, name: "Monotonic Stack / Queue", when: "Finding the next greater/smaller element, or problems involving ranges defined by elements.", problems: ["Next Greater Element", "Daily Temperatures", "Largest Rectangle in Histogram", "Sum of Subarray Minimums."], stats: { implementation: 8, concept: 8, frequency: 6 } },
+            { id: 15, name: "Segment Tree / BIT", when: "You need to do range queries (sum, min, max) and update elements in the array frequently. More powerful than Prefix Sum.", problems: ["Range Sum/Max/Min Query with Updates", "Count of Smaller Numbers After Self."], stats: { implementation: 10, concept: 9, frequency: 3 } },
+            { id: 16, name: "Topological Sorting", when: "Problems with dependencies or a required order (prerequisites). Always on a Directed Acyclic Graph (DAG).", problems: ["Course Schedule I & II", "Alien Dictionary", "Sequence Reconstruction."], stats: { implementation: 6, concept: 7, frequency: 6 } },
+            { id: 17, name: "Matrix Problems", when: "Searching in a grid, pathfinding, rotating, or simulating processes on a 2D array.", problems: ["Spiral Order", "Search a 2D Matrix", "Rotate Image", "Word Search", "Shortest Path in Binary Matrix."], stats: { implementation: 5, concept: 4, frequency: 7 } },
+            { id: 18, name: "Math + Number Theory", when: "Problems involving prime numbers, GCD, modular arithmetic, or fast exponentiation.", problems: ["Count Primes (Sieve of Eratosthenes)", "Pow(x, n)", "GCD/LCM", "Modular Inverse."], stats: { implementation: 6, concept: 8, frequency: 4 } },
+        ];
+
+        const sidebarNav = document.getElementById('sidebar-nav');
+        const mainContent = document.getElementById('main-content');
+        let chartInstance = null;
+
+        function renderSidebar() {
+            sidebarNav.innerHTML = dsaData.map(pattern => `
+                <a href="#" class="sidebar-item block text-gray-600 py-2.5 px-4 rounded transition duration-200 hover:bg-gray-100 hover:text-gray-900" data-id="${pattern.id}">
+                    ${pattern.name}
+                </a>
+            `).join('');
+        }
+
+        function renderContent(patternId = 0) {
+            const pattern = dsaData.find(p => p.id === patternId);
+            if (!pattern) return;
+
+            mainContent.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                    <h2 class="text-3xl font-bold text-gray-900">${pattern.name}</h2>
+                    
+                    <div class="mt-6 grid md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <div class="mb-6">
+                                <h3 class="text-lg font-semibold text-gray-700 mb-2">When to Use</h3>
+                                <p class="text-gray-600 leading-relaxed">${pattern.when}</p>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-700 mb-2">Core Problems</h3>
+                                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                                    ${pattern.problems.map(prob => `<li>${prob}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <canvas id="patternChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-10 pt-6 border-t border-gray-200">
+                         <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">🔥 The Core Strategy</h3>
+                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-bold text-blue-600">1. Understand "WHY"</h4>
+                                <p class="text-sm text-gray-500 mt-1">Visualize the core idea on paper before coding.</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-bold text-blue-600">2. Code & Study</h4>
+                                <p class="text-sm text-gray-500 mt-1">Solve easy problems, then study and code a medium one from NeetCode.io.</p>
+                            </div>
+                             <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-bold text-blue-600">3. Revise</h4>
+                                <p class="text-sm text-gray-500 mt-1">Re-solve from memory after 2 days to ensure true mastery.</p>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            `;
+            renderChart(pattern.stats);
+            updateActiveSidebar(patternId);
+        }
+
+        function renderChart(stats) {
+            const ctx = document.getElementById('patternChart').getContext('2d');
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            chartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Implementation', 'Concept Difficulty', 'Interview Frequency'],
+                    datasets: [{
+                        label: 'Pattern Profile',
+                        data: [stats.implementation, stats.concept, stats.frequency],
+                        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(59, 130, 246, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: '#E5E7EB'
+                            },
+                            grid: {
+                                color: '#E5E7EB'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 12,
+                                    weight: '500'
+                                },
+                                color: '#4B5563'
+                            },
+                            ticks: {
+                                backdropColor: 'transparent',
+                                stepSize: 2,
+                                color: '#6B7280'
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 10
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.r !== null) {
+                                        label += context.parsed.r + ' / 10';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateActiveSidebar(activeId) {
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                if (parseInt(item.dataset.id) === activeId) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        sidebarNav.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = e.target.closest('.sidebar-item');
+            if (target) {
+                const patternId = parseInt(target.dataset.id);
+                renderContent(patternId);
+            }
+        });
+
+        // Initial render
+        renderSidebar();
+        renderContent(0);
+
+    </script>
+</body>
+</html>
