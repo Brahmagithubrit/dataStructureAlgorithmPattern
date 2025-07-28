@@ -74,6 +74,44 @@
             { id: 16, name: "Topological Sorting", when: "Problems with dependencies or a required order (prerequisites). Always on a Directed Acyclic Graph (DAG).", problems: ["Course Schedule I & II", "Alien Dictionary", "Sequence Reconstruction."], stats: { implementation: 6, concept: 7, frequency: 6 } },
             { id: 17, name: "Matrix Problems", when: "Searching in a grid, pathfinding, rotating, or simulating processes on a 2D array.", problems: ["Spiral Order", "Search a 2D Matrix", "Rotate Image", "Word Search", "Shortest Path in Binary Matrix."], stats: { implementation: 5, concept: 4, frequency: 7 } },
             { id: 18, name: "Math + Number Theory", when: "Problems involving prime numbers, GCD, modular arithmetic, or fast exponentiation.", problems: ["Count Primes (Sieve of Eratosthenes)", "Pow(x, n)", "GCD/LCM", "Modular Inverse."], stats: { implementation: 6, concept: 8, frequency: 4 } },
+            {
+                id: 19,
+                name: "Problem Intuition Map",
+                when: `
+                 Is something repeating? → Dynamic Programming
+                 Building step-by-step? → DP, Greedy, or Backtracking
+                 Picking for max/min? → Knapsack, Greedy, Memo
+                 Counting ways? → DP/Combinatorics
+                 Subsequence/substring? → 2D DP or Sliding Window
+                 Range/window problems? → Sliding Window, Prefix Sum
+                 Explore all combinations? → Backtracking/DFS
+                 Trees/Graphs? → DFS/BFS/Union-Find
+                 Optimal path? → BFS/DP/Grid
+                 Find value/index efficiently? → Binary Search/Greedy
+                 Circular structures? → Deque, Monotonic Stack
+                 String/char focus? → Trie, Hashing, DP
+                 Greedy decisions? → Greedy
+
+                 How to use this:
+                - Read question, pause.
+                - Ask: "What’s the core action?"
+                - Match with a known pattern type.
+                - Recall similar problems before coding.
+                `,
+                problems: [
+                    "Identify Repetition → Fibonacci, House Robber",
+                    "Build with Conditions → Word Break, Generate Parentheses",
+                    "Count Solutions → Unique Paths, Climbing Stairs",
+                    "Pick for Value → 0/1 Knapsack, Subset Sum",
+                    "Search Range → Longest Substring Without Repeat",
+                    "Explore All Paths → N-Queens, Sudoku"
+                ],
+                stats: {
+                    implementation: 5,
+                    concept: 10,
+                    frequency: 10
+                }
+            }
         ];
 
         const sidebarNav = document.getElementById('sidebar-nav');
